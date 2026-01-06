@@ -1,0 +1,264 @@
+# Spec-Driven Development – Project Operating System (POS)
+
+This repository provides a **Project Operating System (POS)** for building software projects using **Spec-Driven Development (SDD)** inside Cursor.
+
+It is designed to help you:
+- Work at an *engineer-level* without overengineering
+- Avoid vibe-coding and premature implementation
+- Turn ideas into clear, executable plans
+- Maintain alignment between intent, execution, and validation
+
+This workspace separates **process** from **project content**.
+You define the process once, then reuse it for every new project.
+
+---
+
+## Core philosophy
+
+### Spec-Driven Development (SDD)
+
+In SDD, **the specification is the source of truth**.
+
+- Specs define *intent*
+- Plans derive from specs
+- Tasks implement specs
+- Validation confirms specs were met
+
+Code never silently diverges from the spec.
+If something changes, the spec changes first.
+
+### Project Operating System (POS)
+
+The POS enforces:
+- Clear phases of work
+- Explicit transitions between phases
+- Scope control and traceability
+- Quality gates before integration
+
+The goal is not bureaucracy — it is **clarity, correctness, and confidence**.
+
+---
+
+## Repository structure
+
+```txt
+.cursor/
+  rules/        # Always-on behavioral rules (the operating system)
+  commands/     # Explicit workflow commands (the interface)
+
+spec/           # Source of truth (generated dynamically)
+work/           # Execution artifacts (generated dynamically)
+
+README.md       # This file
+```
+
+### Important
+Only **rules and commands** are pre-defined.
+All specs, plans, tasks, and logs are created dynamically through usage.
+
+---
+
+## CLI Tool
+
+This repository includes a CLI tool to bootstrap new SDD projects.
+
+### Local Development
+
+To build and run the CLI locally:
+
+```bash
+cd cli
+npm install
+npm run build
+node dist/index.js init
+```
+
+### Usage
+
+Once published, the CLI will be available via:
+
+```bash
+npx @eskoubar/spec init
+```
+
+Or directly from GitHub:
+
+```bash
+npx github:eskoubar/spec init
+```
+
+The `spec init` command will:
+- Prompt for project name (folder name)
+- Ask for task mode: `local` (default) or `linear`
+- Optionally initialize a git repository
+- Copy the POS template into a new project folder
+- Create Linear sync configuration if mode is `linear`
+
+After initialization, open the project in Cursor and run `/spec/init` to begin defining your project specification.
+
+---
+
+## The rules (the operating system)
+
+Located in `.cursor/rules/`.
+
+### `00-pos.mdc`
+Defines the overall Project Operating System:
+- Work phases and modes
+- Scope control
+- Quality expectations
+- Agent behavior
+
+### `01-sdd.mdc`
+Defines Spec-Driven Development:
+- How specs evolve
+- How intent flows through the project
+- How change is handled
+
+### `02-work-mode.mdc`
+Defines execution discipline:
+- How tasks are started
+- How scope is controlled
+- How validation is enforced
+
+These rules are **always applied** and should rarely change.
+
+---
+
+## The commands (how you work)
+
+Commands are the **only way** you should interact with the system.
+They define explicit transitions between phases.
+
+### Spec commands
+
+#### `/spec/init`
+Start a new project.
+
+- Pitch the idea freely
+- Generates the initial root specification
+- Captures risks and open questions
+
+Creates/updates:
+- `spec/00-root-spec.md`
+- `spec/03-risks.md`
+- `spec/04-open-questions.md`
+
+---
+
+#### `/spec/refine`
+Improve clarity without planning or implementation.
+
+Use when:
+- The idea is still fuzzy
+- Scope feels unclear
+- Assumptions need to be surfaced
+
+May update:
+- Root spec
+- Risks
+- Open questions
+- Decisions (only if explicitly made)
+
+---
+
+#### `/spec/plan`
+Turn a clear spec into an executable plan.
+
+- Creates milestones and tasks
+- Adds acceptance criteria
+- Updates risks discovered during planning
+
+Creates/updates:
+- `work/backlog/milestones.md`
+- `work/backlog/tasks.local.md`
+- `spec/01-prd.md` (if needed)
+- `spec/06-acceptance.md` (if needed)
+
+---
+
+### Task commands
+
+#### `/task/start`
+Begin work on a single task.
+
+- Selects one task
+- Locks scope
+- Defines acceptance signals
+- Prepares safe execution
+
+No code is written yet.
+
+---
+
+#### `/task/validate`
+Validate completed work before commit or PR.
+
+- Confirms correctness
+- Checks scope and spec alignment
+- Requires evidence (tests or verification)
+
+Produces a clear outcome:
+- Approved
+- Requires fixes
+- Requires spec refinement
+
+---
+
+## Typical workflow
+
+```txt
+/spec/init
+/spec/refine   (optional, repeatable)
+/spec/plan
+/task/start
+[work]
+/task/validate
+```
+
+This loop is repeated for each task.
+
+---
+
+## What NOT to do
+
+- Do not manually create specs or tasks
+- Do not add placeholders or TODOs
+- Do not plan before understanding
+- Do not implement without acceptance criteria
+- Do not let code diverge silently from the spec
+
+The system exists to prevent these failures.
+
+---
+
+## When to change the system
+
+Only adjust:
+- Rules when behavior is consistently wrong
+- Commands when workflow transitions feel unclear
+
+Do **not** tune the system for a single project.
+
+---
+
+## Who this is for
+
+This workspace is ideal if you:
+- Want to work like a professional engineer
+- Use Cursor with AI agents
+- Build complex projects incrementally
+- Care about correctness and clarity
+
+You do **not** need a formal engineering background.
+
+---
+
+## Final note
+
+If something feels hard to reason about:
+- Stop
+- Refine the spec
+- Let clarity lead execution
+
+That is Spec-Driven Development.
