@@ -78,7 +78,7 @@ node dist/index.js init
 Once published to npm, the CLI will be available via:
 
 ```bash
-npx @eskoubar/spec init
+npx @eskoubar95/spec init
 ```
 
 Or directly from GitHub (before npm publish):
@@ -86,10 +86,6 @@ Or directly from GitHub (before npm publish):
 ```bash
 npx github:eskoubar95/spec init
 ```
-
-**Note:** To use `@eskoubar/spec` on npm, you'll need to either:
-- Create a GitHub organization named "eskoubar" and transfer the repo, OR
-- Update package.json to use `@eskoubar95/spec` instead
 
 The `spec init` command will:
 - Prompt for project name (folder name)
