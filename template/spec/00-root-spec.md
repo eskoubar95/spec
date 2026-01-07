@@ -27,3 +27,10 @@ Only include risks that are already visible at this stage.
 
 ## 8. Notes
 Anything else discovered during discussion or research.
+
+## 9. Related Specifications
+If applicable, reference:
+- `spec/01-prd.md` (if PRD was created)
+- `spec/02-architecture.md` (if architecture is documented)
+- `spec/07-design-system.md` (if design is critical)
+- `spec/08-infrastructure.md` (if infrastructure is critical)
