@@ -1,6 +1,6 @@
 {
   "name": "@eskoubar95/spec",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "private": false,
   "bin": {
     "spec": "dist/index.js"
