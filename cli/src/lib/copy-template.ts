@@ -11,20 +11,20 @@ const __dirname = path.dirname(__filename);
  * Works in both development (template at repo root) and published (template at package root)
  */
 async function getTemplateDir(): Promise<string> {
-  // Try package root first (for published package)
-  const packageRoot = path.resolve(__dirname, '../..');
-  const templateInPackage = path.join(packageRoot, 'template');
-  
   // Try repo root (for development)
   const repoRoot = path.resolve(__dirname, '../../../..');
   const templateInRepo = path.join(repoRoot, 'template');
+
+  // Try package root (for published package)
+  const packageRoot = path.resolve(__dirname, '../..');
+  const templateInPackage = path.join(packageRoot, 'template');
   
   // Return the first path that exists
-  if (await fs.pathExists(templateInPackage)) {
-    return templateInPackage;
-  }
   if (await fs.pathExists(templateInRepo)) {
     return templateInRepo;
+  }
+  if (await fs.pathExists(templateInPackage)) {
+    return templateInPackage;
   }
   // Fallback to package root (will fail with clear error in copyTemplate)
   return templateInPackage;

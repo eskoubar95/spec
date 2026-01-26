@@ -2,7 +2,7 @@
 
 /**
  * Helper Metadata Validation Script
- * 
+ *
  * Validates helper metadata for consistency and correctness:
  * - All helpers have YAML frontmatter
  * - Section line ranges match actual section markers
@@ -33,17 +33,17 @@ function log(message, color = 'reset') {
 function parseYAMLFrontmatter(content) {
   const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---/);
   if (!frontmatterMatch) return null;
-  
+
   const frontmatter = {};
   const lines = frontmatterMatch[1].split('\n');
-  
+
   let currentKey = null;
   let currentValue = [];
   let inArray = false;
-  
+
   for (const line of lines) {
     if (line.trim() === '') continue;
-    
+
     // Check for array start
     if (line.match(/^(\s*)([a-z_]+):\s*$/)) {
       if (currentKey) {
@@ -54,13 +54,13 @@ function parseYAMLFrontmatter(content) {
       inArray = true;
       continue;
     }
-    
+
     // Check for array item
     if (inArray && line.match(/^\s*-\s*(.+)$/)) {
       currentValue.push(line.match(/^\s*-\s*(.+)$/)[1]);
       continue;
     }
-    
+
     // Check for key-value
     if (line.match(/^(\s*)([a-z_]+):\s*(.+)$/)) {
       if (currentKey) {
@@ -72,25 +72,25 @@ function parseYAMLFrontmatter(content) {
       inArray = false;
       continue;
     }
-    
+
     // Check for nested structure (sections)
     if (line.match(/^\s+([a-z_]+):/)) {
       // This is a nested key, skip for now (simplified parsing)
       continue;
     }
   }
-  
+
   if (currentKey) {
     frontmatter[currentKey] = currentValue.length === 1 ? currentValue[0] : currentValue;
   }
-  
+
   return frontmatter;
 }
 
 function findSectionMarkers(content) {
   const sections = [];
   const lines = content.split('\n');
-  
+
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
     const sectionMatch = line.match(/^## Section: (.+?) \(Lines (\d+)-(\d+)\)$/);
@@ -103,7 +103,7 @@ function findSectionMarkers(content) {
       });
     }
   }
-  
+
   return sections;
 }
 
@@ -111,14 +111,14 @@ function validateHelper(helperFile) {
   const filePath = path.join(HELPERS_DIR, helperFile);
   const content = fs.readFileSync(filePath, 'utf-8');
   const issues = [];
-  
+
   // 1. Check frontmatter exists
   const frontmatter = parseYAMLFrontmatter(content);
   if (!frontmatter) {
     issues.push({ type: 'error', message: 'Missing YAML frontmatter' });
     return { file: helperFile, issues };
   }
-  
+
   // 2. Check required fields
   const requiredFields = ['helper_id', 'load_when', 'sections', 'always_load'];
   for (const field of requiredFields) {
@@ -126,7 +126,7 @@ function validateHelper(helperFile) {
       issues.push({ type: 'error', message: `Missing required field: ${field}` });
     }
   }
-  
+
   // 3. Check section markers match metadata
   const sections = findSectionMarkers(content);
   if (sections.length > 0 && frontmatter.sections) {
@@ -141,23 +141,22 @@ function validateHelper(helperFile) {
       }
     }
   }
-  
+
   return { file: helperFile, frontmatter, sections, issues };
 }
 
 function validateRegistry() {
   const content = fs.readFileSync(METADATA_FILE, 'utf-8');
-  const helperFiles = fs.readdirSync(HELPERS_DIR)
-    .filter(f => f.endsWith('.md') && f !== 'helper-metadata.md');
-  
+  const helperFiles = fs.readdirSync(HELPERS_DIR).filter((f) => f.endsWith('.md') && f !== 'helper-metadata.md');
+
   const registryHelpers = [];
   const registryMatch = content.match(/### ([a-z-]+)\.md/g);
   if (registryMatch) {
-    registryHelpers.push(...registryMatch.map(m => m.replace('### ', '').replace('.md', '')));
+    registryHelpers.push(...registryMatch.map((m) => m.replace('### ', '').replace('.md', '')));
   }
-  
+
   const issues = [];
-  
+
   // Check all helpers are in registry
   for (const helperFile of helperFiles) {
     const helperId = helperFile.replace('.md', '');
@@ -168,7 +167,7 @@ function validateRegistry() {
       });
     }
   }
-  
+
   // Check registry has all helpers
   for (const registryHelper of registryHelpers) {
     if (!helperFiles.includes(`${registryHelper}.md`)) {
@@ -178,20 +177,19 @@ function validateRegistry() {
       });
     }
   }
-  
+
   return { helperFiles, registryHelpers, issues };
 }
 
 function main() {
   log('🔍 Validating Helper Metadata...\n', 'blue');
-  
-  const helperFiles = fs.readdirSync(HELPERS_DIR)
-    .filter(f => f.endsWith('.md') && f !== 'helper-metadata.md');
-  
+
+  const helperFiles = fs.readdirSync(HELPERS_DIR).filter((f) => f.endsWith('.md') && f !== 'helper-metadata.md');
+
   let totalIssues = 0;
   let totalErrors = 0;
   let totalWarnings = 0;
-  
+
   // Validate each helper
   for (const helperFile of helperFiles) {
     const result = validateHelper(helperFile);
@@ -211,11 +209,11 @@ function main() {
       log(`✅ ${helperFile}`, 'green');
     }
   }
-  
+
   // Validate registry
   log('\n📋 Validating Helper Registry...\n', 'blue');
   const registryResult = validateRegistry();
-  
+
   if (registryResult.issues.length > 0) {
     for (const issue of registryResult.issues) {
       if (issue.type === 'error') {
@@ -230,7 +228,7 @@ function main() {
   } else {
     log('✅ Helper registry is consistent', 'green');
   }
-  
+
   // Summary
   log('\n' + '='.repeat(50), 'blue');
   if (totalIssues === 0) {

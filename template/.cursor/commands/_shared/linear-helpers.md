@@ -60,13 +60,13 @@ This document contains helper logic for Linear operations, including status mapp
 
 ## Label Detection
 
-**Purpose:** Auto-detect task type and map to Linear labels.
+**Purpose:** Determine Linear labels for a task (prefer task tags; fallback to heuristics).
 
 **Logic:**
-1. Analyze task description and title
-2. Detect task type based on keywords
-3. Map task type to label names
-4. Check if labels exist, create if missing
+1. If the task exists in `work/backlog/tasks.local.md`, prefer `**Tags:**` as label names.
+2. If no tags found (or task not found), fallback to keyword-based task type detection.
+3. Check if labels exist; create if missing (when permitted).
+4. Assign labels to issue.
 
 **Task Type Detection:**
 ```markdown
@@ -91,14 +91,24 @@ Task type priority (if multiple matches):
 
 **Label Mapping:**
 ```markdown
-**Map Task Type to Labels:**
+**Map Task Tags / Type to Labels:**
 
-- Design tasks → ["design", "ui", "frontend"]
-- Engineering tasks → ["engineering", "backend" or "frontend", "infrastructure" (if applicable)]
-- Business tasks → ["business", "requirements"]
-- Infrastructure tasks → ["infrastructure", "devops", "deployment"]
-- External service tasks → ["external-service", "integration"]
-- Risk mitigation tasks → ["risk", "mitigation"]
+Priority order:
+
+1) **Task tags (preferred):**
+- Read task block in `work/backlog/tasks.local.md` (by task ID).
+- Parse `**Tags:**` (comma-separated).
+- Use each tag as a label name (optionally prefix with `LABEL_PREFIX` from `work/linear/sync-config.md`).
+- Do not invent type labels; only add `feature`, `bug`, `improvement` if explicitly present in tags.
+
+2) **Fallback (heuristics):**
+- If tags are unavailable, use task type detection and map:
+  - Design → ["design", "ui", "frontend"]
+  - Engineering → ["engineering", "backend" or "frontend"]
+  - Business → ["business", "requirements"]
+  - Infrastructure → ["infrastructure", "devops", "deployment"]
+  - External service → ["external-service", "integration"]
+  - Risk mitigation → ["risk", "mitigation"]
 ```
 
 **Function:**
@@ -206,7 +216,9 @@ Task type priority (if multiple matches):
 **Handle Configuration Error:**
 
 1. IF sync-config.md missing → guide user to create it
-2. IF MODE=linear but status mapping missing → guide user to setup
+2. IF MODE=linear but required status mapping keys are missing:
+   - During `/spec/plan`: **HARD STOP** Linear sync until `work/linear/sync-config.md` is completed
+   - During `/task/*`: skip Linear operations for this run and continue in local mode (do not block code execution)
 3. IF team ID invalid → guide user to update sync-config.md
 ```
 

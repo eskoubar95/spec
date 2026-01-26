@@ -8,6 +8,18 @@ This guide walks you through setting up Linear integration with SDD workflow.
 - Linear MCP configured in Cursor
 - Access to Linear Settings
 
+## Hard stop (recommended)
+
+If you enable Linear mode (`MODE=linear`), `/spec/plan` will treat missing required status mappings as a **hard stop** for Linear sync:
+
+- Required keys in `work/linear/sync-config.md`:
+  - `STATUS_BACKLOG`
+  - `STATUS_IN_PROGRESS`
+  - `STATUS_DONE`
+  - `STATUS_BLOCKED`
+
+This prevents “half-configured” Linear setups that otherwise require babysitting later.
+
 ## Step 1: Opret Linear Workspace
 
 1. Gå til Linear og opret workspace (hvis ikke allerede oprettet)
@@ -97,6 +109,35 @@ AUTO_CREATE_PROJECTS=true
 # Document Configuration
 AUTO_CREATE_DOCUMENTS=true
 ```
+
+## What SDD can do automatically (once configured)
+
+When Linear mode is enabled and config is complete, SDD can:
+
+- **/spec/plan**
+  - Create/update **milestone projects** (if `AUTO_CREATE_PROJECTS=true`)
+  - Create/update **task issues** (status + labels + project link)
+  - Create/update **spec documents** (if `AUTO_CREATE_DOCUMENTS=true`)
+- **/task/start**
+  - Update issue status to “In Progress”
+  - Add a structured “Started …” comment
+- **/task/validate**
+  - Update issue status based on validation outcome
+  - Add a structured “Validated …” comment (evidence + PR link if any)
+
+## What the user must do manually
+
+SDD cannot create these prerequisites for you:
+
+- Configure the **Linear MCP connection** in Cursor (and provide `MCP_CONNECTION_NAME` if you have multiple)
+- Ensure your desired **statuses exist** in Linear (or adjust mappings to match your workspace)
+- Decide your **label taxonomy** (recommended: use `**Tags:**` in `work/backlog/tasks.local.md` → labels; see `LABEL-MAPPING-GUIDE.md`)
+
+## Related docs
+
+- `work/linear/sync-config.md`
+- `work/linear/LABEL-MAPPING-GUIDE.md`
+- `work/linear/FALLBACK-STRATEGY.md`
 
 ## Step 5: Test Integration
 

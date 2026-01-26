@@ -132,6 +132,10 @@ After the pitch, ask these 5 strategic questions in sequence. After each answer,
 - What can users not do without?
 - **Follow-up (if needed):** Ask 1-2 clarifying questions about features, then proceed to Question 3
 
+**Scope locking (important if the initial pitch includes “future vision”):**
+- What is the smallest **MVP scope** we can ship first?
+- Which items mentioned are explicitly **future ideas** (out of MVP scope) and should be parked for later?
+
 **Question 3: Technical Requirements**
 - Are there any technical requirements or constraints?
 - Any specific technologies, frameworks, or platforms required?
@@ -165,10 +169,23 @@ After the pitch, ask these 5 strategic questions in sequence. After each answer,
 - External services: Newsletter platform, payment processing, analytics, etc.?
 - CI/CD requirements: Automatic deployments, manual approval?
 
+**Task management / Linear (if the team wants Linear sync):**
+- Will this project use **Linear** for task tracking, or **local mode** only?
+- If Linear:
+  - Can you provide (or will you set up) the Linear MCP connection in Cursor?
+  - Do you want SDD to auto-create: **milestone projects**, **task issues**, and **spec documents** in Linear?
+  - Do you use any non-standard statuses or labels in Linear (or should we use defaults)?
+  - If you have multiple Linear connections in Cursor: what is the `MCP_CONNECTION_NAME`?
+
 **Design questions (if applicable and not already covered):**
 - Design direction: Do you have existing brand guidelines, design system, or should it be defined?
 - Visual style: Modern/minimalist/professional? Examples or references?
 - Design constraints: Colors, typography preferences, accessibility requirements?
+
+**Design system bootstrap (if design is critical):**
+- If the project will ship UI and design choices will affect implementation quality, create `spec/07-design-system.md`.
+- Use template: `spec/templates/07-design-system.md`
+- Optional (Cursor 2.4+): use the skill `/sdd-design-system-bootstrap` to produce a concrete, non-placeholder design system early.
 
 **Principles:**
 - Ask the 5 structured questions first
@@ -205,6 +222,22 @@ Create or update the following files:
 - `spec/03-risks.md` - Project risks (always create)
 - `spec/04-open-questions.md` - Open questions (always create)
 - `spec/01-prd.md` - Product Requirements Document (optional, create if detailed PRD is needed)
+
+Create or update the following files ONLY IF relevant and confirmed:
+- `spec/08-infrastructure.md` - Technology stack and infrastructure (use template: `spec/templates/08-infrastructure.md`)
+  - **Note:** This file is the source of truth for framework/tool detection and rule activation.
+- `spec/07-design-system.md` - Design system (use template: `spec/templates/07-design-system.md`)
+
+**If Linear is desired (recommendation before `/spec/plan`):**
+- Create `work/linear/sync-config.md` and set `MODE=linear` (see `work/linear/SETUP.md`)
+- **Required (hard requirement for Linear sync in `/spec/plan`)**: provide status mapping keys:
+  - `STATUS_BACKLOG`, `STATUS_IN_PROGRESS`, `STATUS_DONE`, `STATUS_BLOCKED`
+- Optional:
+  - `MCP_CONNECTION_NAME` (if multiple Linear MCP connections)
+  - `DEFAULT_TEAM_ID`
+  - `AUTO_ASSIGN_LABELS=true` (recommended; uses task tags → labels)
+  - `AUTO_CREATE_PROJECTS=true` (milestones → projects)
+  - `AUTO_CREATE_DOCUMENTS=true` (specs → documents)
 
 **Populate files as follows:**
 

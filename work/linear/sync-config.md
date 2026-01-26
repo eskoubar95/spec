@@ -50,6 +50,12 @@ To find your team ID:
 
 Map SDD workflow states to Linear statuses. You can use either status IDs or status names.
 
+**Required when `MODE=linear` (hard requirement for `/spec/plan` Linear sync):**
+- `STATUS_BACKLOG`
+- `STATUS_IN_PROGRESS`
+- `STATUS_DONE`
+- `STATUS_BLOCKED`
+
 **Using Status Names (recommended for custom statuser):**
 ```
 STATUS_BACKLOG=Backlog
@@ -80,6 +86,9 @@ Enable automatic label assignment based on task type.
 ```
 AUTO_ASSIGN_LABELS=true
 ```
+
+**Recommended:** prefer mapping labels from task tags in `work/backlog/tasks.local.md`:
+- See: `work/linear/LABEL-MAPPING-GUIDE.md`
 
 Optional: Add a prefix to all auto-assigned labels.
 
@@ -136,6 +145,7 @@ STATUS_BLOCKED=Blocked
 
 # Label Configuration
 AUTO_ASSIGN_LABELS=true
+LABEL_PREFIX=
 
 # Project Configuration
 AUTO_CREATE_PROJECTS=true
@@ -150,4 +160,9 @@ USE_CYCLES=false
 ## Setup
 
 For detailed setup instructions, see `work/linear/SETUP.md`.
+
+## Fallbacks + troubleshooting
+
+- Fallback strategy: `work/linear/FALLBACK-STRATEGY.md`
+- Label mapping guidance: `work/linear/LABEL-MAPPING-GUIDE.md`
 

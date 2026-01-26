@@ -88,10 +88,17 @@ graph LR
 
 | Feature | Details |
 |---------|---------|
-| **8 Core Commands** | Complete project lifecycle management |
+| **9 Core Commands** | Complete project lifecycle management (+ optional batching) |
 | **Auto-Detection** | Project type, size, phase, and technologies |
 | **Dynamic Rules** | Framework-specific rules auto-activated |
 | **Hybrid Structure** | Adapts to simple and complex projects |
+
+### 🤖 Cursor 2.4+: Skills + Subagents (optional)
+
+| Layer | Purpose | How to use |
+|------|---------|------------|
+| **Skills** | Small, reusable procedures (git hygiene, validation, design bootstrap) | Invoke explicitly (e.g. `/sdd-git-default-branch`) or reference inside commands |
+| **Subagents** | Long-running/batched work + independent verification | Use `batch-runner` for `/task/batch`-style runs and `verifier` as a pre-PR quality gate |
 
 ### 🔗 Deep Integrations
 
@@ -137,7 +144,10 @@ graph LR
 │  │   ├── spec/          # Specification commands            │
 │  │   ├── task/          # Task execution commands           │
 │  │   ├── tools/         # Utility commands                  │
-│  │   └── _shared/       # 16 shared helpers (conditional)   │
+│  │   └── _shared/       # 17 shared helpers (conditional)   │
+│  │                                                           │
+│  ├── skills/            # Reusable procedures (Cursor 2.4+)  │
+│  ├── agents/            # Subagents (Cursor 2.4+)            │
 │  │                                                           │
 │  ├── rules/             # Behavioral rules (always-on)      │
 │  │   ├── 00-pos.mdc     # Project Operating System          │
@@ -497,6 +507,7 @@ npm start init
 - `spec/04-open-questions.md` – Unresolved questions requiring clarification
 - `spec/05-decisions.md` – Key architectural and technical decisions
 - `spec/08-infrastructure.md` – Technology stack and infrastructure choices
+- `spec/07-design-system.md` – Design system (recommended when UI design impacts implementation)
 
 **Example prompts:**
 
@@ -843,6 +854,7 @@ graph LR
 |---------|---------|-------------|--------|
 | `/task/start` | Start task implementation | Ready to code | Git branch, task context, rules activated |
 | `/task/validate` | Validate completed task | Task complete, ready to verify | Validation report, PR creation |
+| `/task/batch` | Execute a milestone/task list sequentially | Multiple tasks need execution with discipline | Per-task outcomes + validation evidence |
 
 ### Tool Commands
 
@@ -958,7 +970,7 @@ node dist/index.js init
 
 ```bash
 # Validate helper metadata
-node .cursor/scripts/validate-helpers.js
+node .cursor/scripts/validate-helpers.cjs
 
 # Expected output: All checks passed ✓
 ```

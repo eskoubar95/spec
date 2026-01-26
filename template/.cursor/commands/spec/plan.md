@@ -67,7 +67,21 @@ Planning outputs
 A) Spec artifacts (create only if needed by planning)
 - Create or update `spec/01-prd.md` if the feature set needs to be made explicit.
 - Create or update `spec/06-acceptance.md` with high-level acceptance criteria / definition of done.
+  - Use template: `spec/templates/06-acceptance.md` (MVP ship checklist + quality gates)
 - Create or update `spec/02-architecture.md` if architecture decisions are made or needed for planning.
+  - Use template: `spec/templates/02-architecture.md`
+
+- Create or update `spec/08-infrastructure.md` if technology, environments, CI/CD, or hosting choices will affect the task breakdown.
+  - Use template: `spec/templates/08-infrastructure.md`
+  - **Note:** This file is the source of truth for framework/tool detection and rule activation.
+
+- Create or update `spec/07-design-system.md` if UI/design decisions will materially affect planning or acceptance criteria.
+  - Use template: `spec/templates/07-design-system.md`
+  - Optional (Cursor 2.4+): use the skill `/sdd-design-system-bootstrap` before splitting design tasks
+
+- Create or update `spec/09-sitemap.md` if the project ships UI (recommended for `projectType=web-app`).
+  - Use template: `spec/templates/09-sitemap.md`
+  - This is the source of truth for required pages, so tasks don’t “miss a screen” mid-implementation.
 
 **When to create architecture.md:**
 - Architecture decisions are made during planning
@@ -183,16 +197,36 @@ D) Optional: Linear integration (ONLY if configured)
    - Continue workflow with local mode only
 
 3. **Check configuration completeness (if Linear mode enabled):**
-   - If status mapping is missing → guide user:
+   - **HARD STOP (planning) if config is incomplete.** If `MODE=linear` is enabled but any of the required keys are missing, stop and require the user to fix `work/linear/sync-config.md` before continuing Linear sync:
+     - Required keys:
+       - `STATUS_BACKLOG`
+       - `STATUS_IN_PROGRESS`
+       - `STATUS_DONE`
+       - `STATUS_BLOCKED`
+   - Provide a recommended minimal snippet (names are fine; IDs optional):
      ```
-     "Linear mode er aktiveret. Før vi kan synkronisere, skal du:
-     1. Gå ind i Linear og oprette custom statuser (hvis nødvendigt)
-     2. Gå ind i Linear og oprette custom labels (hvis nødvendigt)
-     3. Opdater sync-config.md med status IDs eller names
-     
-     Se work/linear/SETUP.md for detaljerede instruktioner."
+     MODE=linear
+     STATUS_BACKLOG=Backlog
+     STATUS_IN_PROGRESS=In Progress
+     STATUS_DONE=Done
+     STATUS_BLOCKED=Blocked
+     AUTO_ASSIGN_LABELS=true
+     AUTO_CREATE_PROJECTS=true
+     AUTO_CREATE_DOCUMENTS=true
      ```
-   - Reference `work/linear/SETUP.md` for setup instructions
+   - Explain what the system can do automatically once config is complete:
+     - Create milestone projects (if `AUTO_CREATE_PROJECTS=true`)
+     - Create/update task issues (status + labels + project linkage)
+     - Create/update spec documents (if `AUTO_CREATE_DOCUMENTS=true`)
+     - Add structured comments on task start/validate
+   - Ask the user what they need to provide manually (if not known):
+     - `MCP_CONNECTION_NAME` (if multiple Linear MCP connections)
+     - `DEFAULT_TEAM_ID` (optional)
+     - Whether they use custom status names (otherwise defaults)
+   - Reference:
+     - `work/linear/SETUP.md` (setup)
+     - `work/linear/LABEL-MAPPING-GUIDE.md` (tags → labels; avoid “feature everywhere”)
+     - `work/linear/FALLBACK-STRATEGY.md` (failures fallback; do not block)
 
 **D.2) Linear Projects Creation (if Linear mode enabled and AUTO_CREATE_PROJECTS=true):**
 
@@ -214,7 +248,7 @@ D) Optional: Linear integration (ONLY if configured)
    - If exists → skip or update (ask user)
    - If not exists → ask user: "Skal jeg oprette Linear issues for tasks?"
    - If yes → create Linear issue:
-     - Issue title: Task description (first line)
+     - Issue title: `[task-id] – [task description]` (include task ID for stable idempotency)
      - Issue description: Full task details (description, acceptance, dependencies, estimate)
      - Issue status: Map to "Backlog" (use status mapping from linear-helpers.md)
      - Issue priority: Map from estimate (S=Low, M=Medium, L=High)

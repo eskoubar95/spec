@@ -102,6 +102,10 @@ D) Decisions (only if unavoidable)
 - UI patterns (card layouts, navigation patterns, form styles, etc.)
 - Accessibility requirements (WCAG level, color contrast)
 
+**If design is critical:**
+- Create or update `spec/07-design-system.md` using `spec/templates/07-design-system.md`
+- Optional (Cursor 2.4+): use the skill `/sdd-design-system-bootstrap` to bootstrap a concrete design system before planning
+
 **F) Infrastructure decisions (if infrastructure is critical)**
 - Hosting provider preferences
 - Database provider preferences
@@ -111,6 +115,9 @@ D) Decisions (only if unavoidable)
 - **Technology Stack:** Document chosen frameworks, tools, and libraries in `spec/08-infrastructure.md` or `spec/02-architecture.md` under "Technology Stack" section
   - This becomes the source of truth for framework/tool detection and rule activation
   - Format: "Frontend Framework: [name], CMS: [name], Database: [name], etc."
+
+**If infrastructure is critical (recommended for most non-trivial projects):**
+- Create or update `spec/08-infrastructure.md` using `spec/templates/08-infrastructure.md`
 
 **G) Architecture decisions (if architecture is critical)**
 - System architecture and component design

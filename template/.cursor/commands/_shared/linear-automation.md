@@ -60,8 +60,14 @@ Automate Linear operations based on SDD workflow events, ensuring seamless integ
    - Report fallback to user but continue workflow normally
 
 4. **Check configuration completeness:**
-   - If Linear mode is enabled but status mapping is missing → guide user to setup
-   - Reference `work/linear/SETUP.md` for setup instructions
+   - Required keys (when `MODE=linear`):
+     - `STATUS_BACKLOG`, `STATUS_IN_PROGRESS`, `STATUS_DONE`, `STATUS_BLOCKED`
+   - **Hard stop policy (planning):** during `/spec/plan`, if any required key is missing → **BLOCK Linear sync** until the user fixes `work/linear/sync-config.md`.
+   - **Execution policy (tasks):** during `/task/*`, if config is incomplete → **skip Linear operations** for this run and continue in local mode (do not block code execution).
+   - Reference:
+     - `work/linear/SETUP.md` (setup)
+     - `work/linear/LABEL-MAPPING-GUIDE.md` (tags → labels + comment templates)
+     - `work/linear/FALLBACK-STRATEGY.md` (availability/operation failure fallback)
 
 ## Linear MCP Functions and Automation Rules
 
@@ -112,11 +118,11 @@ IF Linear mode enabled AND AUTO_CREATE_DOCUMENTS=true AND spec file created/upda
 
 **A) During `/spec/plan`:**
 - **Create issues:** For each task in `work/backlog/tasks.local.md` → create Linear issue
-  - **Issue title:** Task description (first line)
+  - **Issue title:** `[task-id] – [task description]` (include the task ID for stable idempotency)
   - **Issue description:** Full task details (description, acceptance, dependencies, estimate)
   - **Issue status:** Map to "Backlog" (or custom status from config)
   - **Issue priority:** Map from task estimate (S=Low, M=Medium, L=High)
-  - **Issue labels:** Auto-assign labels based on task type (see Labels section)
+  - **Issue labels:** Prefer task tags → labels (see `work/linear/LABEL-MAPPING-GUIDE.md`)
   - **Issue project:** Link to Linear project (if milestone project exists)
   - **Issue team:** Assign to default team (if configured)
   - **Ask before creating:** Always ask user: "Skal jeg oprette Linear issues for tasks?"
@@ -124,7 +130,8 @@ IF Linear mode enabled AND AUTO_CREATE_DOCUMENTS=true AND spec file created/upda
 **B) During `/task/start`:**
 - **Get issue:** Fetch Linear issue details (if Linear task ID provided)
 - **Update issue:** Set status to "In Progress" (or custom status from config)
-- **Update issue:** Add comment: "Task started via SDD workflow at [timestamp]"
+- **Update issue:** Add comment (recommended format):
+  - “Started `<task-id>` via SDD. Branch: `<branch>`. Plan: `<1–3 bullets>`.”
 - **If issue not found:** Error: "Linear issue [ID] ikke fundet"
 
 **C) During `/task/validate`:**
@@ -132,7 +139,8 @@ IF Linear mode enabled AND AUTO_CREATE_DOCUMENTS=true AND spec file created/upda
   - **Approved:** "Done" (or custom status from config)
   - **Requires fixes:** "In Progress" (or custom status from config)
   - **Requires spec refinement:** "Blocked" (or custom status from config)
-- **Update issue:** Add comment with validation summary
+- **Update issue:** Add comment with validation summary (recommended format):
+  - “Validated `<task-id>` via SDD: `<pass/fail>`. Evidence: `<lint/tests/build>`. PR: `<url>` (if any).”
 
 **D) During `/spec/refine` or `/spec/evolve`:**
 - **Update issues:** If spec changes affect tasks → update related Linear issues

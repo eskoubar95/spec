@@ -154,6 +154,26 @@ sections:
 always_load: false
 ```
 
+### branch-detection.md
+
+```yaml
+helper_id: branch-detection
+file: branch-detection.md
+load_when:
+  - task_start
+  - task_validate
+  - pr_creation_needed
+  - git_operation_needed
+sections:
+  detection:
+    title: "Default Branch Detection"
+    lines: [1, 140]
+  usage:
+    title: "Usage in Commands"
+    lines: [141, 220]
+always_load: false
+```
+
 ### git-workflow.md
 
 ```yaml

@@ -17,6 +17,8 @@ Each task follows this structure:
 
 **Tags:** [comma-separated tags, e.g., design, frontend, infrastructure]
 
+**Workspace:** [path within repo, e.g., apps/storefront] (optional; REQUIRED for monorepos)
+
 **Milestone:** [Milestone ID, e.g., M1]
 
 **Sprint:** [Sprint ID, e.g., Sprint 1] (optional)
@@ -51,6 +53,8 @@ Each task follows this structure:
 
 **Tags:** infrastructure, setup
 
+**Workspace:** (optional; for monorepos)
+
 **Milestone:** M1
 
 **Acceptance:** 
@@ -74,6 +78,8 @@ Each task follows this structure:
 **Assignee:** (optional)
 
 **Tags:** engineering, backend, security
+
+**Workspace:** (optional; for monorepos)
 
 **Milestone:** M1
 

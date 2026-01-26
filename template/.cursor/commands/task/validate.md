@@ -78,6 +78,14 @@ Ask what evidence exists:
 - Manual verification steps
 - Screenshots, logs, or other proof
 
+## Workspace scope (REQUIRED for monorepos)
+
+**ONLY EXECUTE IF:** detection indicates `projectType=monorepo`
+
+- Require an explicit workspace scope for the task (from `work/backlog/tasks.local.md` `**Workspace:**` or from the Linear issue description).
+- Run validation commands scoped to that workspace only.
+- If workspace scope is missing → **HARD STOP** and require the user to define it (do not run repo-wide validation).
+
 **Documentation Lookup (if framework-specific issue found):**
 
 **ONLY READ IF framework/tool detected or documentation needed:**
@@ -177,21 +185,22 @@ Assess whether the task is:
 1. Pre-merge checks:
    - Verify all changes are committed
    - Run build/test (if applicable)
-   - Check for merge conflicts with main: `git fetch origin main && git merge-base HEAD origin/main`
+   - Resolve `defaultBranch` (do not assume `main`) using `/sdd-git-default-branch` or `branch-detection.md`
+   - Check for merge conflicts with base: `git fetch origin <default-branch> && git merge-base HEAD origin/<default-branch>`
 
-2. Merge to main:
-   - Checkout main (or default branch): `git checkout main`
-   - Pull latest (if remote exists): `git pull origin main`
+2. Merge to base branch:
+   - Checkout base (default branch): `git checkout <default-branch>`
+   - Pull latest (if remote exists): `git pull origin <default-branch>`
    - Merge task branch: `git merge task/{task-id}-{short-description}`
-   - Push to remote (if configured): `git push origin main`
+   - Push to remote (if configured): `git push origin <default-branch>`
 
 3. Post-merge cleanup:
    - Delete local task branch (optional, ask first): `git branch -d task/{task-id}-{short-description}`
-   - Verify main is clean
+   - Verify base branch is clean
 
 **Ask user preference:**
 - "Should I auto-commit on task completion?" (if not already committed)
-- "Should I auto-merge to main on validation?" (if validated)
+- "Should I auto-merge to the base branch on validation?" (if validated)
 - "Should I delete task branch after merge?" (optional)
 
 If follow-up is required:
@@ -226,14 +235,9 @@ Conclude with one of the following outcomes:
    - If status not found → guide user to create custom status
 
 3. **Create Linear comment with validation summary:**
-   - Add comment to Linear issue:
-     ```
-     "Task validated: [result]
-     Acceptance criteria: [summary]
-     Issues found: [list] (if any)
-     Next steps: [list] (if any)"
-     ```
-   - Include relevant context from validation
+   - Add a structured comment to Linear issue (recommended format):
+     - “Validated `<task-id>` via SDD: `<pass/fail>`. Evidence: `<lint/tests/build>`. PR: `<url>` (if any).”
+   - Include acceptance summary (1–3 bullets) and any follow-up actions (if any)
 
 **Error Handling:**
 - If Linear MCP unavailable → continue without Linear update

@@ -145,9 +145,11 @@ name: CI
 
 on:
   push:
-    branches: [main, develop]
+    # Replace with your repository's base branches (do not assume `main`).
+    # Prefer the resolved default branch (see: /sdd-git-default-branch or branch-detection.md).
+    branches: [<default-branch>]
   pull_request:
-    branches: [main, develop]
+    branches: [<default-branch>]
 
 jobs:
   test:
@@ -184,9 +186,9 @@ name: CI
 
 on:
   push:
-    branches: [main, develop]
+    branches: [<default-branch>]
   pull_request:
-    branches: [main, develop]
+    branches: [<default-branch>]
 
 jobs:
   test:
@@ -248,7 +250,7 @@ name: Deploy
 
 on:
   push:
-    branches: [main]
+    branches: [<default-branch>]
 
 jobs:
   deploy:

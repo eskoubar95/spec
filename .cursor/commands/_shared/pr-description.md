@@ -78,6 +78,15 @@ Generate comprehensive PR descriptions that include:
 
 ## Auto-Generation Process
 
+### Step 0: Resolve the base branch
+
+Do NOT assume the base branch is `main`.
+
+1. Resolve `defaultBranch` using one of:
+   - Skill (Cursor 2.4+): `/sdd-git-default-branch`
+   - Helper: `.cursor/commands/_shared/branch-detection.md` (if present in the project)
+2. Use `defaultBranch` consistently for diff, commit history, and PR base.
+
 ### Step 1: Read Task Information
 
 **From task spec:**
@@ -93,8 +102,8 @@ Generate comprehensive PR descriptions that include:
 ### Step 2: Generate Changes Summary
 
 **From git diff:**
-1. Get diff summary: `git diff main...HEAD --stat`
-2. Get commit history: `git log main..HEAD --oneline`
+1. Get diff summary: `git diff <default-branch>...HEAD --stat`
+2. Get commit history: `git log <default-branch>..HEAD --oneline`
 3. Analyze changed files:
    - Count files changed
    - Identify file types (components, services, tests, etc.)

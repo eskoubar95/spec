@@ -8,6 +8,7 @@ package-lock.json
 # Build outputs
 cli/dist/
 cli/*.log
+cli/template/
 
 # SDD runtime data (project-specific, not template)
 .sdd/

@@ -8,14 +8,15 @@ The SDD system is organized into three main components:
 
 ### Commands Structure
 - **`spec/`** - Specification commands (init, refine, plan, audit, sync, evolve)
-- **`task/`** - Task execution commands (start, validate)
+- **`task/`** - Task execution commands (start, validate, batch)
 - **`tools/`** - Utility commands (refactor)
 
 ### Shared Helpers
-Located in `.cursor/commands/_shared/` with **16 helpers**:
+Located in `.cursor/commands/_shared/` with **17 helpers**:
 - **Core Helpers:** detection, activation, state-assertions, scaling, verification-checkpoints, command-stacks
 - **Integration Helpers:** linear-automation, linear-helpers, github-helpers, github-workflows, coderabbit-integration
 - **Workflow Helpers:** git-workflow, pr-description, deployment-detection
+- **Git Safety Helper:** branch-detection
 - **Quality Helpers:** test-automation, performance-monitoring, documentation-lookup
 
 ### Rules
@@ -24,6 +25,24 @@ Located in `.cursor/rules/` with **11 rules**:
 - **Domain:** 10-engineering.mdc, 11-design.mdc, 12-business.mdc
 - **Technology:** 20-nextjs.mdc, 21-api-design.mdc, 30-database.mdc, 31-testing.mdc
 - **System:** openmemory.mdc
+
+### Skills (Cursor 2.4+)
+Located in `.cursor/skills/`. Skills are **reusable micro-workflows** that commands can reference, or you can invoke directly.
+
+Included skills:
+- `sdd-git-default-branch` - resolve base branch (avoid hardcoded `main`)
+- `sdd-task-preflight` - clean working tree + base branch + task branch naming
+- `sdd-commit-unit` - small logical commits with task-linked messages
+- `sdd-validation-suite` - lint/typecheck/tests/build (when present)
+- `sdd-pr-create-or-update` - create/update PR with correct base branch and structured body
+- `sdd-design-system-bootstrap` - bootstrap a concrete Tailwind + shadcn/ui design system into `spec/07-design-system.md`
+
+### Subagents (Cursor 2.4+)
+Located in `.cursor/agents/`. Subagents are used for **long-running orchestration** and **independent verification** without bloating the main conversation.
+
+Included subagents:
+- `batch-runner` - execute multi-task batch runs sequentially, report concise per-task summaries
+- `verifier` - independent quality gate before PR creation/merge
 
 ### Cache System
 Located in `.sdd/` directory:
@@ -114,6 +133,7 @@ These helpers have no dependencies:
 - `deployment-detection.md`
 - `git-workflow.md`
 - `pr-description.md`
+- `branch-detection.md`
 - `documentation-lookup.md`
 - `github-workflows.md`
 - `detection.md`
@@ -435,7 +455,7 @@ When a helper with dependencies is loaded:
 ### Helper Metadata Validation
 Run validation script to check helper metadata:
 ```bash
-node .cursor/scripts/validate-helpers.js
+node .cursor/scripts/validate-helpers.cjs
 ```
 
 **Checks:**

@@ -153,7 +153,9 @@ Automate Git workflow operations:
 1. Get current branch: `git branch --show-current`
 2. Check if branch exists: `git rev-parse --verify <branch-name>`
 3. Check if pushed: `git ls-remote --heads origin <branch-name>`
-4. Count commits: `git rev-list --count main..<branch-name>`
+4. Count commits:
+   - Resolve `defaultBranch` (do not assume `main`) using `/sdd-git-default-branch` or `branch-detection.md`
+   - Count: `git rev-list --count <default-branch>..<branch-name>`
 5. Get last commit: `git rev-parse HEAD`
 
 ### PR State Detection

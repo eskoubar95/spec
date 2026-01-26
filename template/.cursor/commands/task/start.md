@@ -73,6 +73,24 @@ Inputs (source of truth):
 - `spec/06-acceptance.md` (if it exists)
 - `work/backlog/tasks.local.md`
 
+## Step 0.9 — Workspace scope (REQUIRED for monorepos)
+
+**ONLY EXECUTE IF:** detection indicates `projectType=monorepo`
+
+Before selecting/implementing a task, ensure the task has an explicit workspace scope:
+
+- If the task is local (from `tasks.local.md`):
+  - Read the task block and require `**Workspace:** <path>` (e.g. `apps/storefront`, `apps/backend`).
+  - If missing → **HARD STOP** and ask the user to add `**Workspace:**` to the task before continuing.
+
+- If the task is a Linear issue:
+  - If the issue description contains a workspace path, use it.
+  - Otherwise → **HARD STOP** and ask the user to specify the workspace path for this task.
+
+**Rules:**
+- All commands (install/lint/typecheck/test/build) must be executed **scoped to the workspace**, not the repo root.
+- If the monorepo uses pnpm/yarn/turbo/nx, prefer workspace-scoped commands (e.g., `pnpm -C <workspace> …` or `npm --prefix <workspace> …`).
+
 Step 1 — Select the task
 
 **Support for både local og Linear tasks:**
@@ -111,8 +129,9 @@ Step 1 — Select the task
    - If status not found → guide user to create custom status
 
 3. **Create Linear comment:**
-   - Add comment to Linear issue: "Task started via SDD workflow at [timestamp]"
-   - If task-level spec exists → add comment with spec summary
+   - Add a structured comment to Linear issue:
+     - “Started `<task-id>` via SDD. Branch: `<branch>`. Plan: `<1–3 bullets>`.”
+   - If task-level spec exists → add a second comment with a short spec summary + acceptance focus
 
 **Error Handling:**
 - If Linear MCP unavailable → continue with local mode only
@@ -230,10 +249,13 @@ Before implementation, ensure:
    - If uncommitted changes exist → pause and ask: "Uncommitted changes detected. Commit, stash, or discard?"
    - If untracked files exist → pause and ask: "Untracked files detected. Should they be committed?"
 
-2. Ensure clean main branch:
-   - Checkout main branch (or default branch)
-   - Pull latest changes (if remote exists): `git pull origin main` (or default branch name)
-   - Verify main is clean (no uncommitted changes)
+2. Ensure clean base branch (project-agnostic):
+   - Resolve `defaultBranch` (do not assume `main`) using one of:
+     - Skill (Cursor 2.4+): `/sdd-git-default-branch`
+     - Helper: `.cursor/commands/_shared/branch-detection.md` (if present in the project)
+   - Checkout base branch: `git checkout <default-branch>`
+   - Pull latest changes (if remote exists): `git pull origin <default-branch>`
+   - Verify base is clean (no uncommitted changes)
 
 3. Create task branch:
    - Branch name format: `task/{task-id}-{short-description}` (e.g., `task/t1.2-setup-database`)
